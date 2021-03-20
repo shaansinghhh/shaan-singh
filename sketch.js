@@ -1,61 +1,59 @@
-var canvas,bg;
-var together;
-var tom, tomImg1,tomImg2;
-var jerry, jerryImg1,jerryImg2;
+var canvas;
+var block1,block2,block3,block4;
+var ball, edges;
+var music;
 
-function preload() {
-    bg = loadImage("images/garden.png");
-    tomImg1= loadAnimation("images/tomOne.png");
-    tomImg2=loadAnimation("images/tomTwo.png","images/tomThree.png");
-    tomImg3= loadAnimation("images/tomFour.png");
-    jerryImg1=loadAnimation("images/jerryOne.png");
-    jerryImg2= loadAnimation("images/jerryTwo.png","images/jerryThree.png");
-    jerryImg3=loadAnimation("images/jerryFour.png");
-
+function preload(){
+    music = loadSound("music.mp3");
 }
 
+
 function setup(){
-    canvas = createCanvas(1000,800);
+    canvas = createCanvas(800,600);
 
-    tom = createSprite(870, 600);
-    tom.addAnimation("tomSleeping", tomImg1);
-    tom.scale = 0.2;
+    block1 = createSprite(0,580,360,30);
+    block1.shapeColor = rgb(0,0,255);
 
-    jerry = createSprite(200, 600);
-    jerry.addAnimation("jerryStanding", jerryImg1);
-    jerry.scale = 0.15;
+    block2 = createSprite(295,580,200,30);
+    block2.shapeColor = rgb(255,128,0);
+
+    block3 = createSprite(515,580,200,30);
+    block3.shapeColor = rgb(153,0,76);
+
+    block4 = createSprite(740,580,220,30);
+    block4.shapeColor = rgb(0,100,0);
+
+    ball = createSprite(random(20,750),100, 40,40);
+    ball.shapeColor = rgb(255,255,255);
+    ball.velocityX = 4;
+    ball.velocityY = 9;
 
 }
 
 function draw() {
+    background(rgb(169,169,169));
+    edges=createEdgeSprites();
+    ball.bounceOff(edges);
 
-    background(bg);
+    if(block1.isTouching(ball) && ball.bounceOff(block1)){
+        ball.shapeColor = rgb(0,0,255);
+        music.play();
+    }
 
-    if(tom.x - jerry.x < (tom.width - jerry.width)/2)
-    { 
-        tom.velocityX=0;
-        tom.addAnimation("tomLastImage", tomImg3);
-        tom.x =300;
-        tom.scale=0.3;
-        tom.changeAnimation("tomLastImage");
-        jerry.addAnimation("jerryLastImage", jerryImg3);
-        jerry.scale=0.15;
-        jerry.changeAnimation("jerryLastImage");
-    }  
+    if(block2.isTouching(ball)){
+        ball.shapeColor = rgb(255,128,0);
+        ball.velocityX = 0;
+        ball.velocityY = 0;
+        music.stop();
+    }
+
+    if(block3.isTouching(ball) && ball.bounceOff(block3)){
+        ball.shapeColor = rgb(153,0,76);
+    }
+
+    if(block4.isTouching(ball) && ball.bounceOff(block4)){
+        ball.shapeColor = rgb(10,100,0);
+    }
 
     drawSprites();
-}
-
-
-function keyPressed(){
-
-    if(keyCode === LEFT_ARROW){
-        tom.velocityX = -5; 
-        tom.addAnimation("tomRunning", tomImg2);
-        tom.changeAnimation("tomRunning");
-        
-        jerry.addAnimation("jerryTeasing", jerryImg2);
-        jerry.frameDelay = 25;
-        jerry.changeAnimation("jerryTeasing");
-    }
 }
